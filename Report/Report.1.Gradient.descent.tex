@@ -1,0 +1,113 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+
+\title{Labwork 1: Gradient Descent}
+\author{Pham Tien Nhat \\ Student ID: 2540090 \\ Deep Learning -- USTH}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Implementation}
+% Gradient descent written from scratch in Python. Update rule:
+% \[
+% x_{n+1} = x_n - r \cdot f'(x_n).
+% \]
+% For $f(x) = x^2$ we have $f'(x) = 2x$, so the rule becomes
+% $x_{n+1} = x_n(1 - 2r)$. The fixed point is $x^*=0$ and convergence
+% requires $|1-2r| < 1$, i.e.\ $0 < r < 1$.
+
+\begin{verbatim}
+def func(x):
+    return x * x
+
+def derivative(x):
+    return 2 * x
+
+def gd(start, lr, iter):
+    x = start
+    for i in range(iter):
+        x = x - lr * derivative(x)
+        print(f"Iteration {i+1}: x = {x:.4f}, f(x) = {func(x):.4f}")
+    return x
+\end{verbatim}
+
+\section{Iterative Steps}
+Run with $x_0=10$ and $r=0.1$. First 10 of 56 iterations:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{rrr}
+\toprule
+iter & $x$ & $f(x)$ \\
+\midrule
+1  & 8.0000 & 64.0000 \\
+2  & 6.4000 & 40.9600 \\
+3  & 5.1200 & 26.2144 \\
+4  & 4.0960 & 16.7772 \\
+5  & 3.2768 & 10.7374 \\
+6  & 2.6214 & 6.8719  \\
+7  & 2.0972 & 4.3980  \\
+8  & 1.6777 & 2.8147  \\
+9  & 1.3422 & 1.8014  \\
+10 & 1.0737 & 1.1529  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Effect of Learning Rate}
+Run with $x_0=10$, $r=10^{-6}$, $2{,}300{,}000$ iterations.
+First 10 and last 10 iterations:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{rrr}
+\toprule
+iter & $x$ & $f(x)$ \\
+\midrule
+1        & 10.0000 & 99.9996 \\
+2        & 10.0000 & 99.9992 \\
+3        & 9.9999  & 99.9988 \\
+4        & 9.9999  & 99.9984 \\
+5        & 9.9999  & 99.9980 \\
+6        & 9.9999  & 99.9976 \\
+7        & 9.9999  & 99.9972 \\
+8        & 9.9998  & 99.9968 \\
+9        & 9.9998  & 99.9964 \\
+10       & 9.9998  & 99.9960 \\
+\midrule
+\multicolumn{3}{c}{$\cdots$} \\
+\midrule
+2299991  & 0.1005  & 0.0101 \\
+2299992  & 0.1005  & 0.0101 \\
+2299993  & 0.1005  & 0.0101 \\
+2299994  & 0.1005  & 0.0101 \\
+2299995  & 0.1005  & 0.0101 \\
+2299996  & 0.1005  & 0.0101 \\
+2299997  & 0.1005  & 0.0101 \\
+2299998  & 0.1005  & 0.0101 \\
+2299999  & 0.1005  & 0.0101 \\
+2300000  & 0.1005  & 0.0101 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+\textbf{Comparison: }
+With $r=0.1$ in Section 2, $f(x)$ dropped from $64$ to $0$
+in only $56$ iterations. With $r=10^{-6}$, after $2{,}300{,}000$
+iterations $f(x)$ is still $0.0101$ and $x$ moved from $10$
+to $0.1005$. 
+
+\noindent
+\textbf{Conclusion.}
+A small rate ( $10^{-6}$) does not converge after 2.3 millions iterations. A moderate rate ($0.1$) reaches the
+minimum quickly. 
+% A rate $\geq 1$ would diverge. For $f(x)=x^2$ the
+% safe range is $r\in(0,1)$ with the optimum at $r=0.5$, where the
+% update collapses to a single step since $1-2r=0$.
+
+\end{document}
