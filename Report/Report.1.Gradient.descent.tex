@@ -12,13 +12,6 @@
 \maketitle
 
 \section{Implementation}
-% Gradient descent written from scratch in Python. Update rule:
-% \[
-% x_{n+1} = x_n - r \cdot f'(x_n).
-% \]
-% For $f(x) = x^2$ we have $f'(x) = 2x$, so the rule becomes
-% $x_{n+1} = x_n(1 - 2r)$. The fixed point is $x^*=0$ and convergence
-% requires $|1-2r| < 1$, i.e.\ $0 < r < 1$.
 
 \begin{verbatim}
 def func(x):
@@ -106,8 +99,5 @@ to $0.1005$.
 \textbf{Conclusion.}
 A small rate ( $10^{-6}$) does not converge after 2.3 millions iterations. A moderate rate ($0.1$) reaches the
 minimum quickly. 
-% A rate $\geq 1$ would diverge. For $f(x)=x^2$ the
-% safe range is $r\in(0,1)$ with the optimum at $r=0.5$, where the
-% update collapses to a single step since $1-2r=0$.
 
 \end{document}
