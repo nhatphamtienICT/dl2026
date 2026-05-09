@@ -1,0 +1,117 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+
+\title{Labwork 3: Logistic Regression}
+\author{Pham Tien Nhat \\ Student ID: 2540090 \\ Deep Learning -- USTH}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+\section{Implementation}
+
+
+\begin{verbatim}
+def read_csv(path):
+    x1s = []
+    x2s = []
+    ys = []
+    f = open(path, "r")
+    first = True
+    for line in f:
+        line = line.strip()
+        if line == "":
+            continue
+        if first:
+            first = False
+            continue
+        parts = line.split(",")
+        x2 = float(parts[0])
+        x1 = float(parts[1])
+        y  = float(parts[2])
+        x1s.append(x1)
+        x2s.append(x2)
+        ys.append(y)
+    f.close()
+    return x1s, x2s, ys
+
+def sigmoid(z):
+    return 1 / (1 + math.exp(-z))
+
+def predict(x1, x2, w0, w1, w2):
+    z = w1 * x1 + w2 * x2 + w0
+    return sigmoid(z)
+
+def loss(w0, w1, w2):
+    s = 0.0
+    for i in range(N):
+        y_hat = predict(x1s[i], x2s[i], w0, w1, w2)
+        s = s - (ys[i] * math.log(y_hat) +
+                 (1 - ys[i]) * math.log(1 - y_hat))
+    return s / N
+
+def train(w0, w1, w2, r, iters):
+    for it in range(iters):
+        for i in range(N):
+            y_hat = predict(x1s[i], x2s[i], w0, w1, w2)
+            e = y_hat - ys[i]
+            w0 = w0 - r * e
+            w1 = w1 - r * x1s[i] * e
+            w2 = w2 - r * x2s[i] * e
+    return w0, w1, w2
+\end{verbatim}
+
+The training loop walks through all $19$ data points each iteration and
+updates $w_0$, $w_1$, $w_2$ after every sample.
+
+\section{Results}
+
+The model is trained from initialization $w_0=0$, $w_1=1$, $w_2=2$ with
+learning rate $r = 0.05$ for $1000$ iterations. Iteration results are
+shown below.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{rrrrr}
+\toprule
+iter & $w_0$ & $w_1$ & $w_2$ & $J$ \\
+\midrule
+1    & $-0.2021$  & $0.0811$ & $1.8676$ & $0.8514$ \\
+100  & $-3.9951$  & $0.4903$ & $2.0029$ & $0.5007$ \\
+200  & $-6.5077$  & $0.7460$ & $2.4038$ & $0.3728$ \\
+300  & $-8.3198$  & $0.9323$ & $2.7433$ & $0.3178$ \\
+400  & $-9.7412$  & $1.0807$ & $3.0276$ & $0.2895$ \\
+500  & $-10.9171$ & $1.2053$ & $3.2703$ & $0.2730$ \\
+600  & $-11.9229$ & $1.3129$ & $3.4823$ & $0.2625$ \\
+700  & $-12.8016$ & $1.4072$ & $3.6712$ & $0.2553$ \\
+800  & $-13.5804$ & $1.4907$ & $3.8420$ & $0.2501$ \\
+900  & $-14.2775$ & $1.5651$ & $3.9981$ & $0.2460$ \\
+1000 & $-14.9061$ & $1.6318$ & $4.1416$ & $0.2428$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+The loss drops rapid during the first few hundred iterations and then
+go down slowly. After $1000$ iterations the model converges to
+\[
+w_0 = -14.9061, \qquad w_1 = 1.6318, \qquad w_2 = 4.1416,
+\qquad J = 0.2428.
+\]
+Evaluating with threshold $t = 0.5$ classifies $18$ of $19$ training
+data points correctly ($94.7\%$ accuracy); only 1 is misclassified.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Image/logistic_regression.png}
+\caption{Loan decision data and the 
+decision boundary.}
+\label{fig:logreg}
+\end{figure}
+
+\end{document}
