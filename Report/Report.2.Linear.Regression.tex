@@ -1,0 +1,98 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+
+\title{Labwork 2: Linear Regression}
+\author{Pham Tien Nhat \\ Student ID: 2540090 \\ Deep Learning -- USTH}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+\section{Implementation}
+
+
+\begin{verbatim}
+def read_csv(path):
+    xs = []
+    ys = []
+    f = open(path, "r")
+    for line in f:
+        line = line.strip()
+        if line == "":
+            continue
+        parts = line.split(",")
+        xs.append(float(parts[0]))
+        ys.append(float(parts[1]))
+    f.close()
+    return xs, ys
+
+def predict(x, w0, w1):
+    return w1 * x + w0
+
+def loss(w0, w1):
+    s = 0.0
+    for i in range(N):
+        e = predict(xs[i], w0, w1) - ys[i]
+        s = s + e * e
+    return 0.5 * s / N
+
+def train(w0, w1, r, iters):
+    for it in range(iters):
+        for i in range(N):
+            e = w1 * xs[i] + w0 - ys[i]
+            w0 = w0 - r * e
+            w1 = w1 - r * xs[i] * e
+        print(f"Iteration {it+1}: w0 = {w0:.4f}, "
+              f"w1 = {w1:.4f}, J = {loss(w0, w1):.4f}")
+    return w0, w1
+\end{verbatim}
+
+The training loop walks through all five data points each iteration and
+updates $w_0$ and $w_1$ after every sample.
+
+\section{Results}
+
+The model is trained from initialization $w_0=0$, $w_1=1$ with learning
+rate $r = 10^{-4}$ for $100$ iterations. The first ten iterations are
+shown below.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{rrrr}
+\toprule
+iter & $w_0$ & $w_1$ & $J(w_0,w_1)$ \\
+\midrule
+1  & 0.0217 & 1.7763 & 443.9450 \\
+2  & 0.0312 & 1.9189 & 358.4757 \\
+3  & 0.0385 & 1.9450 & 348.0546 \\
+4  & 0.0453 & 1.9498 & 346.2428 \\
+5  & 0.0521 & 1.9506 & 345.8382 \\
+6  & 0.0589 & 1.9506 & 345.6862 \\
+7  & 0.0657 & 1.9506 & 345.5806 \\
+8  & 0.0725 & 1.9505 & 345.4835 \\
+9  & 0.0792 & 1.9504 & 345.3880 \\
+10 & 0.0860 & 1.9503 & 345.2928 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+After $100$ iterations the model converges
+to
+\[
+w_0 = 0.6915, \qquad w_1 = 1.9416, \qquad J = 336.8393,
+\]
+giving the fit shown in Figure~\ref{fig:lr}. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Image/linear_regression.png}
+\caption{Fitted line $y = 1.9416\,x + 0.6915$ obtained from $100$ iterations.}
+\label{fig:lr}
+\end{figure}
+
+\end{document}
