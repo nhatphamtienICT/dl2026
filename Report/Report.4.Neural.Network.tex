@@ -1,0 +1,119 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+
+\title{Labwork 4: Neural Network}
+\author{Pham Tien Nhat \\ Student ID: 2540090 \\ Deep Learning -- USTH}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Implementation}
+
+The neural network architecture is read from a text file that provides the
+number of layers including input, hidden, output with corresponding neurons in each
+layer.  Three classes are defined: Neuron, Layer, and
+NeuralNetwork.
+
+\begin{verbatim}
+def read_network(path):
+    structure = []
+    f = open(path, "r")
+    n_layers = int(f.readline().strip())
+    for _ in range(n_layers):
+        structure.append(int(f.readline().strip()))
+    f.close()
+    return structure
+
+class Neuron:
+    def __init__(self, weights, bias):
+        self.weights = weights
+        self.bias = bias
+
+    def forward(self, inputs):
+        z = sum(w * x for w, x in zip(self.weights, inputs)) + self.bias
+        a = sigmoid(z)
+        return z, a
+
+class Layer:
+    def __init__(self, neurons):
+        self.neurons = neurons
+
+    def forward(self, inputs):
+        zs = []
+        acts = []
+        for n in self.neurons:
+            z, a = n.forward(inputs)
+            zs.append(z)
+            acts.append(a)
+        return zs, acts
+
+class NeuralNetwork:
+    def __init__(self, structure):
+        self.layers = []
+        for i in range(1, len(structure)):
+            n_in = structure[i - 1]
+            n_out = structure[i]
+            neurons = [Neuron([0.0] * n_in, 0.0) for _ in range(n_out)]
+            self.layers.append(Layer(neurons))
+
+    def init_random(self):
+        for layer in self.layers:
+            for neuron in layer.neurons:
+                neuron.weights = [random.random() for _ in neuron.weights]
+                neuron.bias = random.random()
+
+    def forward(self, x):
+        a = x
+        all_z = []
+        all_a = [x]
+        for layer in self.layers:
+            zs, a = layer.forward(a)
+            all_z.append(zs)
+            all_a.append(a)
+        return all_z, all_a
+\end{verbatim}
+
+
+\section{Results}
+
+The network is configured with structure $[2, 2, 1]$ : two inputs, two hidden
+neurons, one output.  
+
+\medskip
+\noindent Hidden layer:
+\[
+\text{Neuron 1 :}\quad w_1 = 20,\; w_2 = 20,\; b = -10
+\]
+\[
+\text{Neuron 2 :}\quad w_1 = 20,\; w_2 = 20,\; b = -30
+\]
+Output layer:
+\[
+\text{Neuron 1:}\quad w_1 = 20,\; w_2 = -20,\; b = -10
+\]
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{rrrrl}
+\toprule
+$x_1$ & $x_2$ & $y$ & $\hat{y}$ & pred \\
+\midrule
+0 & 0 & 0 & 0.0000 & 0 \\
+0 & 1 & 1 & 1.0000 & 1 \\
+1 & 0 & 1 & 1.0000 & 1 \\
+1 & 1 & 0 & 0.0000 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{Forward pass results (threshold $= 0.5$).}
+\end{table}
+
+All four inputs are classified correctly.  
+
+
+\end{document}
